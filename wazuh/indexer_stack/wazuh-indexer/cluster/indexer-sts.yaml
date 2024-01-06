@@ -26,9 +26,15 @@ spec:
     spec:
       # Set the wazuh-indexer volume permissions so the wazuh-indexer user can use it
       volumes:
-        - name: indexer-certs
+        - name: indexer-node-certs
           secret:
-            secretName: indexer-certs
+            secretName: indexer-node-cert-secret
+        - name: indexer-root-ca-certs
+          secret:
+            secretName: indexer-root-ca-cert-secret
+        - name: indexer-admin-certs
+          secret:
+            secretName: indexer-admin-cert-secret
         - name: indexer-conf
           configMap:
             name: indexer-conf
@@ -94,25 +100,25 @@ spec:
           volumeMounts:
             - name: wazuh-indexer
               mountPath: /var/lib/wazuh-indexer
-            - name: indexer-certs
-              mountPath: /usr/share/wazuh-indexer/certs/node-key.pem
-              subPath: node-key.pem
-              readOnly: true
-            - name: indexer-certs
+            - name: indexer-node-certs
               mountPath: /usr/share/wazuh-indexer/certs/node.pem
-              subPath: node.pem
+              subPath: tls.crt  # Mounting the node certificate
               readOnly: true
-            - name: indexer-certs
+            - name: indexer-node-certs
+              mountPath: /usr/share/wazuh-indexer/certs/node-key.pem
+              subPath: tls.key  # Mounting the node private key
+              readOnly: true
+            - name: indexer-root-ca-certs
               mountPath: /usr/share/wazuh-indexer/certs/root-ca.pem
-              subPath: root-ca.pem
+              subPath: tls.crt  # Mounting the root CA certificate
               readOnly: true
-            - name: indexer-certs
+            - name: indexer-admin-certs
               mountPath: /usr/share/wazuh-indexer/certs/admin.pem
-              subPath: admin.pem
+              subPath: tls.crt  # Mounting the admin certificate
               readOnly: true
-            - name: indexer-certs
+            - name: indexer-admin-certs
               mountPath: /usr/share/wazuh-indexer/certs/admin-key.pem
-              subPath: admin-key.pem
+              subPath: tls.key  # Mounting the admin private key
               readOnly: true
             - name: indexer-conf
               mountPath: /usr/share/wazuh-indexer/opensearch.yml

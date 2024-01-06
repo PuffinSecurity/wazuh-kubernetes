@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wazuh-ingress-master
+  namespace: wazuh
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: "master.wazuh.puffinsecurity.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wazuh-master
+                port:
+                  number: 55000
+  tls:
+    - hosts:
+        - "master.wazuh.puffinsecurity.com"
+      secretName: wazuh-master-tls

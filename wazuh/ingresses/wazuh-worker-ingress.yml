@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wazuh-ingress-workers
+  namespace: wazuh
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: "workers.wazuh.puffinsecurity.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wazuh-workers
+                port:
+                  number: 1514
+  tls:
+    - hosts:
+        - "workers.wazuh.puffinsecurity.com"
+      secretName: wazuh-workers-tls

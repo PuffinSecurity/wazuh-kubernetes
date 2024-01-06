@@ -1,0 +1,49 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: private-ca-issuer
+  namespace: wazuh
+spec:
+  selfSigned: {}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: indexer-node-certificate
+  namespace: wazuh
+spec:
+  secretName: indexer-node-cert-secret
+  issuerRef:
+    name: private-ca-issuer
+    kind: Issuer
+  commonName: "*.wazuh-indexer"
+  dnsNames:
+    - "*.wazuh-indexer"
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: indexer-root-ca-certificate
+  namespace: wazuh
+spec:
+  secretName: indexer-root-ca-cert-secret
+  isCA: true
+  issuerRef:
+    name: private-ca-issuer
+    kind: Issuer
+  commonName: "root-ca"
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: indexer-admin-certificate
+  namespace: wazuh
+spec:
+  secretName: indexer-admin-cert-secret
+  issuerRef:
+    name: private-ca-issuer
+    kind: Issuer
+  commonName: "admin"
